@@ -4,8 +4,10 @@ public class Stack<E> {
     private final int size; // Número máximo de elementos
     private int top;        // Topo da pilha
     private E[] elements;   // Array de armazenamento
+    private int tamanho;
 
     public Stack(int size) {
+    	this.tamanho = 0;
         this.size = size > 0 ? size : standardSize;
         top = -1;
         elements = (E[]) new Object[size];
@@ -26,6 +28,7 @@ public class Stack<E> {
         }
         // Insere o pushValue na pilha
         elements[++top] = pushValue;
+        tamanho++;
     }
 
     /*
@@ -38,6 +41,11 @@ public class Stack<E> {
             throw new Exception("Stack is empty, cannot pop");
         }
         // Remove o elemento superior da pilha
+        tamanho--;
         return elements[top--];
+    }
+    
+    public int size() {
+    	return tamanho;
     }
 }
