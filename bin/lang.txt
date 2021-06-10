@@ -1,0 +1,4 @@
+:ind
+if is0 2
+goto ind
+:end
