@@ -9,7 +9,7 @@ inc 1
 :ind
 if is0 2
   if is0 3
-    inc 4
+    nc 4
   endif
   goto end
 endif
