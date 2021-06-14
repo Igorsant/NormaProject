@@ -12,5 +12,6 @@ public class Tag {
 	public static final String adds = "add";
 	public static final String sets = "set";
 	public static final String whiles = "while";
+	public static final String endwhiles = "endwhile";
 	public static final String fors = "for";
 }

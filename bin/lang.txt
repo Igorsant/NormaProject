@@ -1,29 +1,11 @@
 inc 2
 inc 2
 inc 2
-inc 1
-inc 1
-inc 1
-
-
-:ind
-if is0 2
-  if is0 3
-    nc 4
-  endif
-  goto end
-endif
-else
-inc 5
-if is0 7
-  if is 8
-    inc 7
-  endif
-inc 9
-endif
-endelse
-
-dec 1
-dec 2
-goto ind
-:end
+inc 2
+inc 2
+inc 3
+inc 3
+inc 3
+while 2
+  inc 3
+endwhile

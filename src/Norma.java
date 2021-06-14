@@ -47,34 +47,55 @@ public class Norma {
 
 	private void execute(int start) {
 		for(int i = start; i < lang.size(); i++){
+			System.out.println("\n" + lang.get(i) + "<<<<<<");
+			for(int j = 0; j < registradores.length; j++) {
+				System.out.println("Registrador " + j + " = " + registradores[j]);
+			}
 			String[] aux = lang.get(i).trim().split(" ");
-			if(execFactory(aux, i)) {
+			if(!execFactory(aux, i)) {
 				break;
 			}
+
+		}
+
+		System.out.println("\n=========================================");
+		for(int j = 0; j < registradores.length; j++) {
+			System.out.println("Registrador " + j + " = " + registradores[j]);
 		}
 	}
 
 	private boolean execFactory(String[] values, int index) {
 		String command = values[0];
 
-		if(command.equals(Tag.inc)) registradores[Integer.parseInt(values[1])]++;
-		if(command.equals(Tag.dec)) registradores[Integer.parseInt(values[1])]--;
-		if(command.equals(Tag.set0)) registradores[Integer.parseInt(values[1])] = 0;
+		if(command.equals(Tag.inc)) {
+			registradores[Integer.parseInt(values[1])]++;
+			return true;
+		}
+
+		if(command.equals(Tag.dec)) {
+			registradores[Integer.parseInt(values[1])]-=1;
+			return true;
+		}
+
+		if(command.equals(Tag.set0)) {
+			registradores[Integer.parseInt(values[1])] = 0;
+			return true;
+		}
 
 		if(command.equals(Tag.ifs) && values[1].equals(Tag.is0)) {
 			int registrador = registradores[Integer.parseInt(values[2])];
 			if(registrador != 0) {
-				execute(findNext(index, Tag.endif, this.getNumberOfBlackSpaces(index)));
+				execute(findNext(index, Tag.endif, this.getNumberOfBlankSpaces(index)));
 				return true;
 			}
 		}
 
 		if(command.equals(Tag.elses)) {
-			String[] line = findIfLine(index, this.getNumberOfBlackSpaces(index));
+			String[] line = findIfLine(index, this.getNumberOfBlankSpaces(index));
 			if(line != null && line[1].equals(Tag.is0)) {
 				int registrador = registradores[Integer.parseInt(line[2])];
 				if(registrador == 0) {
-					execute(findNext(index, Tag.endelse, this.getNumberOfBlackSpaces(index)));
+					execute(findNext(index, Tag.endelse, this.getNumberOfBlankSpaces(index)));
 					return true;
 				}
 			}
@@ -115,11 +136,19 @@ public class Norma {
 		}
 
 		if(command.equals(Tag.whiles)) {
-			// while
+			int registrador = registradores[Integer.parseInt(values[1])];
+
+			if (registrador > 0) {
+				registradores[Integer.parseInt(values[1])]--;
+				execute(index);
+			}
+			execute(findNext(index, Tag.endwhiles, this.getNumberOfBlankSpaces(index)) + 1);
+			return true;
 		}
 
 		if(command.equals(Tag.fors)) {
 			// for
+			return true;
 		}
 
 		return false;
@@ -128,17 +157,17 @@ public class Norma {
 	private String[] findIfLine(int index, int numberOfBlankSpaces) {
 		for(int i = index; i > 0; i--) {
 			String[] line = lang.get(i).trim().split(" ");
-			if(line[0].equals(Tag.ifs) && numberOfBlankSpaces == this.getNumberOfBlackSpaces(i)) {
+			if(line[0].equals(Tag.ifs) && numberOfBlankSpaces == this.getNumberOfBlankSpaces(i)) {
 				return line;
 			}
 		}
 		return null;
 	}
 
-	private int getNumberOfBlackSpaces(int index) {
+	private int getNumberOfBlankSpaces(int index) {
 		char[] chars = lang.get(index).toCharArray();
 		int counter = 0;
-		for(char c:chars) {
+		for(char c: chars) {
 			if(c == ' ') {
 				counter++;
 			}else {
@@ -196,6 +225,25 @@ public class Norma {
 			}
 		}
 
+		if(command.equals(Tag.whiles)) {
+			try {
+				stack.push(Tag.whiles);
+
+			} catch(Exception e) {
+				return true;
+			}
+		}
+
+		if(command.equals(Tag.endwhiles)) {
+			try {
+				if(!stack.pop().equals(Tag.whiles)) {
+					return true;
+				}
+			} catch (Exception e) {
+				return true;
+			}
+		}
+
 		return false;
 	}
 
@@ -210,7 +258,7 @@ public class Norma {
 
 	private int findNext(int start, String end, int numberOfBlankSpaces) {
 		for(int i=start; i<lang.size(); i++) {
-			if(lang.get(i).trim().split(" ")[0].equals(end) && this.getNumberOfBlackSpaces(i) == numberOfBlankSpaces) {
+			if(lang.get(i).trim().split(" ")[0].equals(end) && this.getNumberOfBlankSpaces(i) == numberOfBlankSpaces) {
 				return i+1;
 			}
 		}
